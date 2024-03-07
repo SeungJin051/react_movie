@@ -19,6 +19,14 @@ function App() {
   };
   console.log(toDos);
 
+  // 할 일을 삭제하는 함수
+  const deleteBtn = (indexToDelete) => {
+    setToDos((prevToDos) => {
+      // 이전 할 일 목록에서 indexToDelete를 제외한 새로운 배열 생성
+      return prevToDos.filter((_, index) => index !== indexToDelete);
+    });
+  };
+
   return (
     <div>
       <h1 className={styles.title}>My Todo List ({toDos.length})</h1>
@@ -33,7 +41,10 @@ function App() {
         <hr />
         <ul>
           {toDos.map((item, index) => (
-            <li key={index}>{item}</li>
+            <li key={index}>
+              {item}
+              <button onClick={() => deleteBtn(index)}>❌</button>
+            </li>
           ))}
         </ul>
       </form>
