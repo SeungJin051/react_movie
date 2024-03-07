@@ -1,35 +1,21 @@
 import styles from "./App.module.css";
 import { useState, useEffect } from "react";
 
-function App() {
-  const [counter, setCounter] = useState(0);
-  const [keyword, setKeyword] = useState("");
-  const onClick = () => setCounter(counter + 1);
-  const onChange = (event) => {
-    setKeyword(event.target.value);
-  };
+function Hello() {
   useEffect(() => {
-    console.log("한번 실행");
+    console.log("Created :)");
+    return () => console.log("Destoryed :(");
   }, []);
-  useEffect(() => {
-    console.log("keyword 바뀌면 실행");
-  }, [keyword]);
-  useEffect(() => {
-    console.log("counter 바뀌면 실행");
-  }, [counter]);
-  useEffect(() => {
-    console.log("keyword & counter 바뀌면 실행");
-  }, [keyword, counter]);
+  return <h1>Hello</h1>;
+}
+
+function App() {
+  const [showing, setShowing] = useState(false);
+  const onClick = () => setShowing((prev) => !prev);
   return (
     <div>
-      <input
-        value={keyword}
-        onChange={onChange}
-        type="text"
-        placeholder="검색..."
-      />
-      <h1 className={styles.title}>{counter}</h1>
-      <button onClick={onClick}>Click me</button>
+      {showing ? <Hello /> : null}
+      <button onClick={onClick}>{showing ? "Hide" : "Show"}</button>
     </div>
   );
 }
