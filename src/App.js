@@ -1,53 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./App.module.css";
 
 function App() {
-  const [toDo, setToDo] = useState(""); // 입력된 할 일을 저장하는 상태
-  const [toDos, setToDos] = useState([]); // 할 일 목록을 저장하는 상태
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+  const [amount, setAmount] = useState(); // 입력된 금액을 저장하는 상태
 
-  // 입력된 값을 상태에 업데이트하는 함수
-  const onChange = (event) => setToDo(event.target.value);
+  useEffect(() => {
+    fetch("https://api.coinpaprika.com/v1/tickers")
+      .then((response) => response.json(0))
+      .then((json) => {
+        setCoins(json);
+        setLoading(false);
+      });
+  }, []);
 
-  // 할 일을 추가하는 함수
-  const onSubmit = (event) => {
-    event.preventDefault(); // 폼의 기본 동작 방지
-    if (toDo.trim() === "") return; // 입력된 값이 없으면 함수 종료
-
-    // 이전 할 일 목록에 새로운 할 일을 추가하여 상태 업데이트
-    setToDos((prevToDos) => [toDo, ...prevToDos]);
-    setToDo(""); // 입력 필드 초기화
-  };
-  console.log(toDos);
-
-  // 할 일을 삭제하는 함수
-  const deleteBtn = (indexToDelete) => {
-    setToDos((prevToDos) => {
-      // 이전 할 일 목록에서 indexToDelete를 제외한 새로운 배열 생성
-      return prevToDos.filter((_, index) => index !== indexToDelete);
-    });
+  const handleAmountChange = (event) => {
+    const inputAmount = parseInt(event.target.value); // 입력된 금액을 정수형으로 변환
+    setAmount(inputAmount); // 입력된 금액 상태 업데이트
   };
 
   return (
     <div>
-      <h1 className={styles.title}>My Todo List ({toDos.length})</h1>
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          placeholder="할 일을 적으세요"
-          value={toDo}
-          onChange={onChange}
-        />
-        <button type="submit">추가</button>
-        <hr />
-        <ul>
-          {toDos.map((item, index) => (
-            <li key={index}>
-              {item}
-              <button onClick={() => deleteBtn(index)}>❌</button>
-            </li>
-          ))}
-        </ul>
-      </form>
+      <h1>The Coins~ {loading ? "" : `(${coins.length})`}</h1>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <div>
+          <form>
+            <input
+              type="number"
+              placeholder="How many $ you have?"
+              value={amount}
+              onChange={handleAmountChange}
+            />
+          </form>
+          <hr />
+          <select>
+            {coins.map((coin) => (
+              <option key={coin.id}>
+                {coin.name} ({coin.symbol}) :
+                {(amount / coin.quotes.USD.price).toFixed(2)}개 구매 가능
+                {/* toFixed(2) 메서드는 부동 소수점 숫자를 고정 소수점 숫자로 변환하는 JavaScript의 내장 메서드입니다. 
+            여기서 소수점 이하 자리를 두 개로 설정 */}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }
