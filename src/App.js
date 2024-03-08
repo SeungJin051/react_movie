@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./routes/Home";
 import Detail from "./routes/Detail";
-import Nav from "./components/Nav";
 
 // tailwind
 import "./index.css";
